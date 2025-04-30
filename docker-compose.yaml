@@ -1,0 +1,34 @@
+version: "3.7"
+
+services:
+  todo:
+    build:
+      context: .
+      dockerfile: ./todo/app.dockerfile
+    depends_on:
+      - todo_db
+    environment:
+      DATABASE_URL: postgres://postgres:jochie@todo_db/go-gql-pg-api?sslmode=disable
+    restart: on-failure
+
+  graphql:
+    build:
+      context: .
+      dockerfile: ./graphql/app.dockerfile
+    ports:
+      - 8000:8080
+    depends_on:
+      - todo
+    environment:
+      TODO_SERVICE_URL: todo:8080
+    restart: on-failure
+
+  todo_db:
+    build:
+      context: ./todo
+      dockerfile: ./db.dockerfile
+    environment:
+      POSTGRES_DB: go-gql-pg-api
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "jochie"
+    restart: unless-stopped

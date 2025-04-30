@@ -1,0 +1,21 @@
+scalar Time
+
+type Todo {
+    id: String!
+    text: String!
+    completed: Boolean!
+    updatedAt: Time!
+}
+
+input CreateTodoInput {
+    text: String!
+    completed: Boolean
+}
+
+type Mutation {
+    createTodo(todo: CreateTodoInput!): Todo!
+}
+
+type Query {
+    todos(id: String): [Todo!]!
+}

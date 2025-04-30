@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS todos (
+    id CHAR(27) PRIMARY KEY,
+    text VARCHAR(255) NOT NULL,
+    completed BOOLEAN NOT NULL DEFAULT false,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL
+);
