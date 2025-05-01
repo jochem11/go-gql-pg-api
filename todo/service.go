@@ -32,7 +32,7 @@ func (s todoService) PostTodo(ctx context.Context, text string, completed *bool)
 	t := &Todo{
 		ID:        id.String(),
 		Text:      text,
-		UpdatedAt: id.Time(),
+		UpdatedAt: time.Now().UTC(),
 	}
 
 	if completed != nil {

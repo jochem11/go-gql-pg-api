@@ -23,7 +23,7 @@ func NewClient(url string) (*Client, error) {
 }
 
 func (c *Client) Close() {
-	c.Close()
+	c.conn.Close()
 }
 
 func (c *Client) PostTodo(ctx context.Context, text string, completed *bool) (*Todo, error) {
@@ -35,16 +35,15 @@ func (c *Client) PostTodo(ctx context.Context, text string, completed *bool) (*T
 		return nil, err
 	}
 
-	var updatedAt time.Time
-	if err := updatedAt.UnmarshalBinary(r.Todo.UpdatedAt); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal UpdatedAt: %v", err)
-	}
+	newTodo := r.Todo
+	newTodoUpdatedAt := time.Time{}
+	newTodoUpdatedAt.UnmarshalBinary(newTodo.UpdatedAt)
 
 	return &Todo{
-		ID:        r.Todo.Id,
-		Text:      r.Todo.Text,
-		Completed: r.Todo.Completed,
-		UpdatedAt: updatedAt,
+		ID:        newTodo.Id,
+		Text:      newTodo.Text,
+		Completed: newTodo.Completed,
+		UpdatedAt: newTodoUpdatedAt,
 	}, nil
 }
 
@@ -56,7 +55,7 @@ func (c *Client) GetTodo(ctx context.Context, id string) (*Todo, error) {
 		return nil, err
 	}
 
-	var updatedAt time.Time
+	updatedAt := time.Time{}
 	if err := updatedAt.UnmarshalBinary(r.Todo.UpdatedAt); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal UpdatedAt: %v", err)
 	}
@@ -77,7 +76,7 @@ func (c *Client) GetTodos(ctx context.Context) ([]Todo, error) {
 
 	todos := []Todo{}
 	for _, t := range r.Todos {
-		var updatedAt time.Time
+		updatedAt := time.Time{}
 		if err := updatedAt.UnmarshalBinary(t.UpdatedAt); err != nil {
 			return nil, fmt.Errorf("failed to unmarshal UpdatedAt: %v", err)
 		}
