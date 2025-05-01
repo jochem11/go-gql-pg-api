@@ -9,6 +9,7 @@ package pb
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -26,7 +27,7 @@ type Todo struct {
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Text          string                 `protobuf:"bytes,2,opt,name=text,proto3" json:"text,omitempty"`
 	Completed     bool                   `protobuf:"varint,3,opt,name=completed,proto3" json:"completed,omitempty"`
-	UpdatedAt     []byte                 `protobuf:"bytes,4,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
+	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -82,7 +83,7 @@ func (x *Todo) GetCompleted() bool {
 	return false
 }
 
-func (x *Todo) GetUpdatedAt() []byte {
+func (x *Todo) GetUpdatedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.UpdatedAt
 	}
@@ -92,7 +93,7 @@ func (x *Todo) GetUpdatedAt() []byte {
 type PostTodoRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Text          string                 `protobuf:"bytes,1,opt,name=text,proto3" json:"text,omitempty"`
-	Completed     *bool                  `protobuf:"varint,2,opt,name=completed,proto3,oneof" json:"completed,omitempty"`
+	Completed     bool                   `protobuf:"varint,2,opt,name=completed,proto3" json:"completed,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -135,8 +136,8 @@ func (x *PostTodoRequest) GetText() string {
 }
 
 func (x *PostTodoRequest) GetCompleted() bool {
-	if x != nil && x.Completed != nil {
-		return *x.Completed
+	if x != nil {
+		return x.Completed
 	}
 	return false
 }
@@ -358,17 +359,15 @@ var File_todo_proto protoreflect.FileDescriptor
 const file_todo_proto_rawDesc = "" +
 	"\n" +
 	"\n" +
-	"todo.proto\x12\x02pb\"f\n" +
+	"todo.proto\x12\x02pb\x1a\x1fgoogle/protobuf/timestamp.proto\"\x82\x01\n" +
 	"\x04Todo\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04text\x18\x02 \x01(\tR\x04text\x12\x1c\n" +
-	"\tcompleted\x18\x03 \x01(\bR\tcompleted\x12\x1c\n" +
-	"\tupdatedAt\x18\x04 \x01(\fR\tupdatedAt\"V\n" +
+	"\tcompleted\x18\x03 \x01(\bR\tcompleted\x128\n" +
+	"\tupdatedAt\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"C\n" +
 	"\x0fPostTodoRequest\x12\x12\n" +
-	"\x04text\x18\x01 \x01(\tR\x04text\x12!\n" +
-	"\tcompleted\x18\x02 \x01(\bH\x00R\tcompleted\x88\x01\x01B\f\n" +
-	"\n" +
-	"_completed\"0\n" +
+	"\x04text\x18\x01 \x01(\tR\x04text\x12\x1c\n" +
+	"\tcompleted\x18\x02 \x01(\bR\tcompleted\"0\n" +
 	"\x10PostTodoResponse\x12\x1c\n" +
 	"\x04todo\x18\x01 \x01(\v2\b.pb.TodoR\x04todo\" \n" +
 	"\x0eGetTodoRequest\x12\x0e\n" +
@@ -381,7 +380,7 @@ const file_todo_proto_rawDesc = "" +
 	"\vTodoService\x127\n" +
 	"\bPostTodo\x12\x13.pb.PostTodoRequest\x1a\x14.pb.PostTodoResponse\"\x00\x124\n" +
 	"\aGetTodo\x12\x12.pb.GetTodoRequest\x1a\x13.pb.GetTodoResponse\"\x00\x127\n" +
-	"\bGetTodos\x12\x13.pb.GetTodosRequest\x1a\x14.pb.GetTodosResponse\"\x00B+Z)github.com/jochem11/go-gql-pg-api/todo/pbb\x06proto3"
+	"\bGetTodos\x12\x13.pb.GetTodosRequest\x1a\x14.pb.GetTodosResponse\"\x00B\x06Z\x04./pbb\x06proto3"
 
 var (
 	file_todo_proto_rawDescOnce sync.Once
@@ -397,29 +396,31 @@ func file_todo_proto_rawDescGZIP() []byte {
 
 var file_todo_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_todo_proto_goTypes = []any{
-	(*Todo)(nil),             // 0: pb.Todo
-	(*PostTodoRequest)(nil),  // 1: pb.PostTodoRequest
-	(*PostTodoResponse)(nil), // 2: pb.PostTodoResponse
-	(*GetTodoRequest)(nil),   // 3: pb.GetTodoRequest
-	(*GetTodoResponse)(nil),  // 4: pb.GetTodoResponse
-	(*GetTodosRequest)(nil),  // 5: pb.GetTodosRequest
-	(*GetTodosResponse)(nil), // 6: pb.GetTodosResponse
+	(*Todo)(nil),                  // 0: pb.Todo
+	(*PostTodoRequest)(nil),       // 1: pb.PostTodoRequest
+	(*PostTodoResponse)(nil),      // 2: pb.PostTodoResponse
+	(*GetTodoRequest)(nil),        // 3: pb.GetTodoRequest
+	(*GetTodoResponse)(nil),       // 4: pb.GetTodoResponse
+	(*GetTodosRequest)(nil),       // 5: pb.GetTodosRequest
+	(*GetTodosResponse)(nil),      // 6: pb.GetTodosResponse
+	(*timestamppb.Timestamp)(nil), // 7: google.protobuf.Timestamp
 }
 var file_todo_proto_depIdxs = []int32{
-	0, // 0: pb.PostTodoResponse.todo:type_name -> pb.Todo
-	0, // 1: pb.GetTodoResponse.todo:type_name -> pb.Todo
-	0, // 2: pb.GetTodosResponse.todos:type_name -> pb.Todo
-	1, // 3: pb.TodoService.PostTodo:input_type -> pb.PostTodoRequest
-	3, // 4: pb.TodoService.GetTodo:input_type -> pb.GetTodoRequest
-	5, // 5: pb.TodoService.GetTodos:input_type -> pb.GetTodosRequest
-	2, // 6: pb.TodoService.PostTodo:output_type -> pb.PostTodoResponse
-	4, // 7: pb.TodoService.GetTodo:output_type -> pb.GetTodoResponse
-	6, // 8: pb.TodoService.GetTodos:output_type -> pb.GetTodosResponse
-	6, // [6:9] is the sub-list for method output_type
-	3, // [3:6] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	7, // 0: pb.Todo.updatedAt:type_name -> google.protobuf.Timestamp
+	0, // 1: pb.PostTodoResponse.todo:type_name -> pb.Todo
+	0, // 2: pb.GetTodoResponse.todo:type_name -> pb.Todo
+	0, // 3: pb.GetTodosResponse.todos:type_name -> pb.Todo
+	1, // 4: pb.TodoService.PostTodo:input_type -> pb.PostTodoRequest
+	3, // 5: pb.TodoService.GetTodo:input_type -> pb.GetTodoRequest
+	5, // 6: pb.TodoService.GetTodos:input_type -> pb.GetTodosRequest
+	2, // 7: pb.TodoService.PostTodo:output_type -> pb.PostTodoResponse
+	4, // 8: pb.TodoService.GetTodo:output_type -> pb.GetTodoResponse
+	6, // 9: pb.TodoService.GetTodos:output_type -> pb.GetTodosResponse
+	7, // [7:10] is the sub-list for method output_type
+	4, // [4:7] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_todo_proto_init() }
@@ -427,7 +428,6 @@ func file_todo_proto_init() {
 	if File_todo_proto != nil {
 		return
 	}
-	file_todo_proto_msgTypes[1].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

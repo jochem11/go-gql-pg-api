@@ -1,18 +1,20 @@
 syntax = "proto3";
 package pb;
 
-option go_package = "github.com/jochem11/go-gql-pg-api/todo/pb";
+option go_package = "./pb";
+
+import "google/protobuf/timestamp.proto";
 
 message Todo {
-    string id = 1;
-    string text = 2;
-    bool completed = 3;
-    bytes updatedAt = 4;
+  string id = 1;
+  string text = 2;
+  bool completed = 3;
+  google.protobuf.Timestamp updatedAt = 4;
 }
 
 message PostTodoRequest {
   string text = 1;
-  optional bool completed = 2;
+  bool completed = 2;
 }
 
 message PostTodoResponse {
@@ -34,10 +36,7 @@ message GetTodosResponse {
 }
 
 service TodoService {
-  rpc PostTodo(PostTodoRequest) returns (PostTodoResponse) {
-  }
-  rpc GetTodo(GetTodoRequest) returns (GetTodoResponse) {
-  }
-  rpc GetTodos(GetTodosRequest) returns (GetTodosResponse) {
-  }
+  rpc PostTodo(PostTodoRequest) returns (PostTodoResponse) {}
+  rpc GetTodo(GetTodoRequest) returns (GetTodoResponse) {}
+  rpc GetTodos(GetTodosRequest) returns (GetTodosResponse) {}
 }

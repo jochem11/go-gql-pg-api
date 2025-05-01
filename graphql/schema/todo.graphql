@@ -9,7 +9,7 @@ type Todo {
 
 input CreateTodoInput {
     text: String!
-    completed: Boolean
+    completed: Boolean!
 }
 
 type Mutation {

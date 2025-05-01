@@ -7,7 +7,7 @@ import (
 )
 
 type Service interface {
-	PostTodo(ctx context.Context, text string, completed *bool) (*Todo, error)
+	PostTodo(ctx context.Context, text string, completed bool) (*Todo, error)
 	GetTodo(ctx context.Context, id string) (*Todo, error)
 	GetTodos(ctx context.Context) ([]Todo, error)
 }
@@ -27,20 +27,14 @@ func NewService(r Repository) Service {
 	return &todoService{r}
 }
 
-func (s todoService) PostTodo(ctx context.Context, text string, completed *bool) (*Todo, error) {
+func (s todoService) PostTodo(ctx context.Context, text string, completed bool) (*Todo, error) {
 	id := ksuid.New()
 	t := &Todo{
 		ID:        id.String(),
 		Text:      text,
+		Completed: completed,
 		UpdatedAt: time.Now().UTC(),
 	}
-
-	if completed != nil {
-		t.Completed = *completed
-	} else {
-		t.Completed = false
-	}
-
 	if err := s.repository.PutTodo(ctx, *t); err != nil {
 		return nil, err
 	}

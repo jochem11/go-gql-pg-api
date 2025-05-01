@@ -6,6 +6,7 @@ import (
 	"github.com/jochem11/go-gql-pg-api/todo/pb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"net"
 )
 
@@ -32,29 +33,15 @@ func (s *grpcServer) PostTodo(ctx context.Context, r *pb.PostTodoRequest) (*pb.P
 	if err != nil {
 		return nil, err
 	}
+
+	// Convert time.Time to google.protobuf.Timestamp
+	updatedAt := timestamppb.New(t.UpdatedAt)
+
 	return &pb.PostTodoResponse{Todo: &pb.Todo{
 		Id:        t.ID,
 		Text:      t.Text,
 		Completed: t.Completed,
-	}}, nil
-}
-
-func (s *grpcServer) GetTodo(ctx context.Context, r *pb.GetTodoRequest) (*pb.GetTodoResponse, error) {
-	t, err := s.service.GetTodo(ctx, r.Id)
-	if err != nil {
-		return nil, err
-	}
-
-	updatedAtBytes, err := t.UpdatedAt.MarshalBinary()
-	if err != nil {
-		return nil, fmt.Errorf("failed to marshal UpdatedAt: %v", err)
-	}
-
-	return &pb.GetTodoResponse{Todo: &pb.Todo{
-		Id:        t.ID,
-		Text:      t.Text,
-		Completed: t.Completed,
-		UpdatedAt: updatedAtBytes,
+		UpdatedAt: updatedAt, // Assign the Timestamp to UpdatedAt
 	}}, nil
 }
 
@@ -66,20 +53,15 @@ func (s *grpcServer) GetTodos(ctx context.Context, r *pb.GetTodosRequest) (*pb.G
 
 	todos := []*pb.Todo{}
 	for _, t := range res {
-		updatedAtBytes, err := t.UpdatedAt.MarshalBinary()
-		if err != nil {
-			return nil, fmt.Errorf("failed to marshal UpdatedAt for todo ID %v: %v", t.ID, err)
-		}
+		// Convert time.Time to google.protobuf.Timestamp
+		updatedAt := timestamppb.New(t.UpdatedAt)
 
-		todos = append(
-			todos,
-			&pb.Todo{
-				Id:        t.ID,
-				Text:      t.Text,
-				Completed: t.Completed,
-				UpdatedAt: updatedAtBytes,
-			},
-		)
+		todos = append(todos, &pb.Todo{
+			Id:        t.ID,
+			Text:      t.Text,
+			Completed: t.Completed,
+			UpdatedAt: updatedAt, // Assign the Timestamp to UpdatedAt
+		})
 	}
 	return &pb.GetTodosResponse{Todos: todos}, nil
 }

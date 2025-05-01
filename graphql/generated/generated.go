@@ -262,7 +262,7 @@ type Todo {
 
 input CreateTodoInput {
     text: String!
-    completed: Boolean
+    completed: Boolean!
 }
 
 type Mutation {
@@ -2894,7 +2894,7 @@ func (ec *executionContext) unmarshalInputCreateTodoInput(ctx context.Context, o
 			it.Text = data
 		case "completed":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("completed"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			data, err := ec.unmarshalNBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}

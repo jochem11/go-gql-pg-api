@@ -8,7 +8,7 @@ import (
 
 type CreateTodoInput struct {
 	Text      string `json:"text"`
-	Completed *bool  `json:"completed,omitempty"`
+	Completed bool   `json:"completed"`
 }
 
 type Mutation struct {

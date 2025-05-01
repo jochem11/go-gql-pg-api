@@ -2,10 +2,10 @@ package todo
 
 import (
 	"context"
-	"fmt"
+	_ "fmt"
 	"github.com/jochem11/go-gql-pg-api/todo/pb"
 	"google.golang.org/grpc"
-	"time"
+	_ "time"
 )
 
 type Client struct {
@@ -26,7 +26,7 @@ func (c *Client) Close() {
 	c.conn.Close()
 }
 
-func (c *Client) PostTodo(ctx context.Context, text string, completed *bool) (*Todo, error) {
+func (c *Client) PostTodo(ctx context.Context, text string, completed bool) (*Todo, error) {
 	r, err := c.service.PostTodo(ctx, &pb.PostTodoRequest{
 		Text:      text,
 		Completed: completed,
@@ -35,15 +35,14 @@ func (c *Client) PostTodo(ctx context.Context, text string, completed *bool) (*T
 		return nil, err
 	}
 
-	newTodo := r.Todo
-	newTodoUpdatedAt := time.Time{}
-	newTodoUpdatedAt.UnmarshalBinary(newTodo.UpdatedAt)
+	// Convert google.protobuf.Timestamp to time.Time
+	updatedAt := r.Todo.UpdatedAt.AsTime()
 
 	return &Todo{
-		ID:        newTodo.Id,
-		Text:      newTodo.Text,
-		Completed: newTodo.Completed,
-		UpdatedAt: newTodoUpdatedAt,
+		ID:        r.Todo.Id,
+		Text:      r.Todo.Text,
+		Completed: r.Todo.Completed,
+		UpdatedAt: updatedAt, // Use the converted time.Time
 	}, nil
 }
 
@@ -55,16 +54,14 @@ func (c *Client) GetTodo(ctx context.Context, id string) (*Todo, error) {
 		return nil, err
 	}
 
-	updatedAt := time.Time{}
-	if err := updatedAt.UnmarshalBinary(r.Todo.UpdatedAt); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal UpdatedAt: %v", err)
-	}
+	// Convert google.protobuf.Timestamp to time.Time
+	updatedAt := r.Todo.UpdatedAt.AsTime()
 
 	return &Todo{
 		ID:        r.Todo.Id,
 		Text:      r.Todo.Text,
 		Completed: r.Todo.Completed,
-		UpdatedAt: updatedAt,
+		UpdatedAt: updatedAt, // Use the converted time.Time
 	}, nil
 }
 
@@ -76,19 +73,15 @@ func (c *Client) GetTodos(ctx context.Context) ([]Todo, error) {
 
 	todos := []Todo{}
 	for _, t := range r.Todos {
-		updatedAt := time.Time{}
-		if err := updatedAt.UnmarshalBinary(t.UpdatedAt); err != nil {
-			return nil, fmt.Errorf("failed to unmarshal UpdatedAt: %v", err)
-		}
-		todos = append(
-			todos,
-			Todo{
-				ID:        t.Id,
-				Text:      t.Text,
-				Completed: t.Completed,
-				UpdatedAt: updatedAt,
-			},
-		)
+		// Convert google.protobuf.Timestamp to time.Time
+		updatedAt := t.UpdatedAt.AsTime()
+
+		todos = append(todos, Todo{
+			ID:        t.Id,
+			Text:      t.Text,
+			Completed: t.Completed,
+			UpdatedAt: updatedAt, // Use the converted time.Time
+		})
 	}
 	return todos, nil
 }
