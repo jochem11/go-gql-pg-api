@@ -65,3 +65,19 @@ func (s *grpcServer) GetTodos(ctx context.Context, r *pb.GetTodosRequest) (*pb.G
 	}
 	return &pb.GetTodosResponse{Todos: todos}, nil
 }
+
+func (s *grpcServer) GetTodo(ctx context.Context, r *pb.GetTodoRequest) (*pb.GetTodoResponse, error) {
+	t, err := s.service.GetTodo(ctx, r.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	updatedAt := timestamppb.New(t.UpdatedAt)
+
+	return &pb.GetTodoResponse{Todo: &pb.Todo{
+		Id:        t.ID,
+		Text:      t.Text,
+		Completed: t.Completed,
+		UpdatedAt: updatedAt,
+	}}, nil
+}

@@ -40,7 +40,7 @@ func (r postgresRepository) PutTodo(ctx context.Context, t Todo) error {
 }
 
 func (r postgresRepository) GetTodoByID(ctx context.Context, id string) (*Todo, error) {
-	row := r.db.QueryRowContext(ctx, "SELECT id, text, completed, updated_at FROM todos WHERE id = $id", id)
+	row := r.db.QueryRowContext(ctx, "SELECT id, text, completed, updated_at FROM todos WHERE id = $1", id)
 	t := &Todo{}
 	if err := row.Scan(&t.ID, &t.Text, &t.Completed, &t.UpdatedAt); err != nil {
 		return nil, err

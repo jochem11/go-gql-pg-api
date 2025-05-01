@@ -19,3 +19,7 @@ type Mutation {
 type Query {
     todos(id: String): [Todo!]!
 }
+
+type Subscription {
+    todos(id: String): [Todo!]!
+}
